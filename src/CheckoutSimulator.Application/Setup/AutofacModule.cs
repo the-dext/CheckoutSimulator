@@ -30,6 +30,7 @@ namespace CheckoutSimulator.Application.Setup
 
             builder.RegisterType<GetStockItemsQueryHandler>().As<IRequestHandler<GetStockItemsQuery, IStockKeepingUnit[]>>();
             builder.RegisterMediatR(Assembly.GetExecutingAssembly());
+            builder.RegisterType<TillFactory>().AsSelf().SingleInstance();
 
             builder.Register<Till>((ctx) =>
             {

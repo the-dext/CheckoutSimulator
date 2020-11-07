@@ -74,7 +74,14 @@ namespace CheckoutSimulator.Console
         {
             foreach (var cmd in this.Commands)
             {
-                System.Console.WriteLine($"{cmd.KeyboadShortCut}: {cmd.Prompt}");
+                if (cmd.KeyboadShortCut != string.Empty)
+                {
+                    Console.WriteLine($"{cmd.KeyboadShortCut}: {cmd.Prompt}");
+                }
+                else
+                {
+                    Console.WriteLine();
+                }
             }
         }
 
@@ -83,14 +90,25 @@ namespace CheckoutSimulator.Console
         /// </summary>
         private async Task SetupCommands()
         {
-            var stockItems = (await this.AppMediator.Send(new GetStockItemsQuery()))
-                .OrderBy(x => x.Description);
-
+            // General commands.
             this.Commands = new List<(string KeyBoardShortcut, string Prompt, Func<Task<bool>> Function)>()
             {
                 ("Q", "Quit Application", () => { Environment.Exit(0); return Task.FromResult(true); }),
+                ("T", "Request Scanning Total Price", async () =>
+                {
+                    var totalPrice = await this.AppMediator.Send(new GetTotalPriceQuery()).ConfigureAwait(true);
+
+                    Console.WriteLine($"*********");
+                    Console.WriteLine($"Total price so far: {totalPrice:C2}");
+
+                    return true;
+                }),
+                (string.Empty, string.Empty, () => Task.FromResult(true)), // Null command to print a gap in the menu options.
             };
 
+
+            // Commands per SKU
+            var stockItems = (await this.AppMediator.Send(new GetStockItemsQuery())).OrderBy(x => x.Description);
             int keyCode = 1;
             foreach (var stockItem in stockItems)
             {
@@ -99,7 +117,9 @@ namespace CheckoutSimulator.Console
                     stockItem.Description,
                     async () =>
                     {
-                        return await this.AppMediator.Send(new ScanItemCommand(stockItem.Barcode));
+                        await this.AppMediator.Send(new ScanItemCommand(stockItem.Barcode));
+                        Console.WriteLine($"1 {stockItem.Description} @{stockItem.UnitPrice:C2}");
+                        return true;
                     }
                 ));
                 keyCode++;

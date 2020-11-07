@@ -6,7 +6,7 @@ namespace CheckoutSimulator.Application.Queries
     using MediatR;
 
     /// <summary>
-    /// Defines the <see cref="GetStockItemsQuery" />.
+    /// Defines the <see cref="GetStockItemsQuery"/>.
     /// </summary>
     public class GetStockItemsQuery : IRequest<IStockKeepingUnit[]>
     {

@@ -13,7 +13,7 @@ namespace CheckoutSimulator.Application.Tests.CommandHandlers
     using static TestUtils.TestIdioms;
 
     /// <summary>
-    /// Defines the <see cref="ScanItemCommandHandlerTests" />.
+    /// Defines the <see cref="ScanItemCommandHandlerTests"/>.
     /// </summary>
     public class ScanItemCommandHandlerTests
     {
@@ -36,14 +36,8 @@ namespace CheckoutSimulator.Application.Tests.CommandHandlers
         }
 
         /// <summary>
-        /// Writable the properties behave as expected.
+        /// The ScanItemCommandHandler_Can_Handle_ScanItemCommand.
         /// </summary>
-        [Fact]
-        public void WritableProperties_Behave()
-        {
-            AssertWritablePropertiesBehaveAsExpected<ScanItemCommandHandler>();
-        }
-
         [Fact]
         public void ScanItemCommandHandler_Can_Handle_ScanItemCommand()
         {
@@ -56,7 +50,16 @@ namespace CheckoutSimulator.Application.Tests.CommandHandlers
         }
 
         /// <summary>
-        /// Defines the <see cref="TestFixture" />.
+        /// Writable the properties behave as expected.
+        /// </summary>
+        [Fact]
+        public void WritableProperties_Behave()
+        {
+            AssertWritablePropertiesBehaveAsExpected<ScanItemCommandHandler>();
+        }
+
+        /// <summary>
+        /// Defines the <see cref="TestFixture"/>.
         /// </summary>
         private class TestFixtureBuilder
         {
@@ -65,7 +68,7 @@ namespace CheckoutSimulator.Application.Tests.CommandHandlers
             public Mock<Till> mockTill;
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="TestFixture"/> class.
+            /// Initializes a new instance of the <see cref="TestFixtureBuilder"/> class.
             /// </summary>
             public TestFixtureBuilder()
             {

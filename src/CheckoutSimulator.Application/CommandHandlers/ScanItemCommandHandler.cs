@@ -28,14 +28,15 @@ namespace CheckoutSimulator.Application.CommandHandlers
         /// <summary>
         /// The Handle.
         /// </summary>
-        /// <param name="request">The request <see cref="ScanItemCommand"/>.</param>
+        /// <param name="cmd">The request <see cref="ScanItemCommand"/>.</param>
         /// <param name="cancellationToken">The cancellationToken <see cref="CancellationToken"/>.</param>
         /// <returns>The <see cref="Task{bool}"/>.</returns>
-        public Task<bool> Handle(ScanItemCommand request, CancellationToken cancellationToken)
+        public Task<bool> Handle(ScanItemCommand cmd, CancellationToken cancellationToken)
         {
-            _ = Guard.Against.Null(request, nameof(request));
+            _ = Guard.Against.Null(cmd, nameof(cmd));
 
-            // do nothing
+            this.till.ScanItem(cmd.Barcode);
+
             return Task.FromResult(true);
         }
     }

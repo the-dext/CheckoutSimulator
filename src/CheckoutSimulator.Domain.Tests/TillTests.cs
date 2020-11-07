@@ -19,6 +19,68 @@ namespace CheckoutSimulator.Domain.Tests
     public class TillTests
     {
         /// <summary>
+        /// The Can_Scan_Item.
+        /// </summary>
+        [Fact]
+        public void Can_Scan_Item()
+        {
+            // Arrange
+            var testFixture = new TestFixtureBuilder();
+            var sut = testFixture
+                .WithStockKeepingUnit("B15", 0.45, "Biscuits")
+                .BuildSut();
+            var expectedBarcode = "B15";
+
+            // Act
+            sut.ScanItem(expectedBarcode);
+
+            // Assert
+            sut.ListScannedItems().Should().Contain(expectedBarcode);
+        }
+
+        /// <summary>
+        /// The Can_Scan_MultipleItems.
+        /// </summary>
+        [Fact]
+        public void Can_Scan_MultipleItems()
+        {
+            // Arrange
+            var testFixture = new TestFixtureBuilder();
+            var sut = testFixture
+                .WithStockKeepingUnit("B15", 0.45, "Biscuits")
+                .WithStockKeepingUnit("A12", 0.30, "Apple")
+                .BuildSut();
+            var expectedBarcodes = new List<string> { "B15", "A12", "B15", "B15" };
+
+            // Act
+            expectedBarcodes.ForEach(sut.ScanItem);
+
+            // Assert
+            sut.ListScannedItems().Should().BeEquivalentTo(expectedBarcodes);
+        }
+
+        /// <summary>
+        /// The Can_Total_Scanned_Items.
+        /// </summary>
+        [Fact]
+        public void Can_Total_Scanned_Items()
+        {
+            // Arrange
+            var testFixture = new TestFixtureBuilder();
+            var sut = testFixture
+                .WithStockKeepingUnit("B15", 0.45, "Biscuits")
+                .BuildSut();
+
+            // Act
+            sut.ScanItem("B15");
+            sut.ScanItem("B15");
+            sut.ScanItem("B15");
+
+            // Assert
+            sut.RequestTotalPrice().Should().Be(0.45 * 3);
+        }
+
+        /// <summary>
         /// The CompleteScanning_StateUnderTest_ExpectedBehavior.
         /// </summary>
         [Fact]
@@ -60,6 +122,26 @@ namespace CheckoutSimulator.Domain.Tests
         }
 
         /// <summary>
+        /// The Scanning_Unknown_Item_Throws_Exception.
+        /// </summary>
+        [Fact]
+        public void Scanning_Unknown_Item_Throws_Exception()
+        {
+            // Arrange
+            var testFixture = new TestFixtureBuilder();
+            var sut = testFixture
+                .WithStockKeepingUnit("B15", 0.45, "Biscuits")
+                .BuildSut();
+
+            var unxpectedBarcode = "A12";
+
+            Action act = () => sut.ScanItem(unxpectedBarcode);
+
+            // Assert
+            act.Should().Throw<UnknownItemException>().WithMessage("Unrecognised barcode: A12");
+        }
+
+        /// <summary>
         /// The VoidItems_Resets_ScannedItems.
         /// </summary>
         [Fact]
@@ -82,83 +164,15 @@ namespace CheckoutSimulator.Domain.Tests
             sut.ListScannedItems().Count().Should().Be(0);
         }
 
-        [Fact]
-        public void Can_Scan_Item()
-        {
-            // Arrange
-            var testFixture = new TestFixtureBuilder();
-            var sut = testFixture
-                .WithStockKeepingUnit("B15", 0.45, "Biscuits")
-                .BuildSut();
-            var expectedBarcode = "B15";
-
-            // Act
-            sut.ScanItem(expectedBarcode);
-
-            // Assert
-            sut.ListScannedItems().Should().Contain(expectedBarcode);
-        }
-
-        [Fact]
-        public void Can_Scan_MultipleItems()
-        {
-            // Arrange
-            var testFixture = new TestFixtureBuilder();
-            var sut = testFixture
-                .WithStockKeepingUnit("B15", 0.45, "Biscuits")
-                .WithStockKeepingUnit("A12", 0.30, "Apple")
-                .BuildSut();
-            var expectedBarcodes = new List<string> { "B15", "A12", "B15", "B15" };
-
-            // Act
-            expectedBarcodes.ForEach(sut.ScanItem);
-
-            // Assert
-            sut.ListScannedItems().Should().BeEquivalentTo(expectedBarcodes);
-        }
-
-        [Fact]
-        public void Can_Total_Scanned_Items()
-        {
-            // Arrange
-            var testFixture = new TestFixtureBuilder();
-            var sut = testFixture
-                .WithStockKeepingUnit("B15", 0.45, "Biscuits")
-                .BuildSut();
-
-            // Act
-            sut.ScanItem("B15");
-            sut.ScanItem("B15");
-            sut.ScanItem("B15");
-
-            // Assert
-            sut.RequestTotalPrice().Should().Be(0.45 * 3);
-        }
-
-        [Fact]
-        public void Scanning_Unknown_Item_Throws_Exception()
-        {
-            // Arrange
-            var testFixture = new TestFixtureBuilder();
-            var sut = testFixture
-                .WithStockKeepingUnit("B15", 0.45, "Biscuits")
-                .BuildSut();
-
-            var unxpectedBarcode = "A12";
-
-            Action act = () => sut.ScanItem(unxpectedBarcode);
-
-            // Assert
-            act.Should().Throw<UnknownItemException>().WithMessage("Unrecognised barcode: A12");
-        }
-
         /// <summary>
         /// Defines the <see cref="TestFixtureBuilder" />.
         /// </summary>
         private class TestFixtureBuilder
         {
             public Fixture Fixture;
+
             public List<IStockKeepingUnit> StockKeepingUnits;
+
             private readonly List<Action<Till>> postBuildActions;
 
             /// <summary>
@@ -191,6 +205,7 @@ namespace CheckoutSimulator.Domain.Tests
             /// <summary>
             /// The WithExistingScannedItem.
             /// </summary>
+            /// <param name="barcode">The barcode<see cref="string"/>.</param>
             /// <returns>The <see cref="TestFixtureBuilder"/>.</returns>
             public TestFixtureBuilder WithPreviouslyScannedItem(string barcode)
             {
@@ -201,6 +216,13 @@ namespace CheckoutSimulator.Domain.Tests
                 return this;
             }
 
+            /// <summary>
+            /// The WithStockKeepingUnit.
+            /// </summary>
+            /// <param name="barcode">The barcode<see cref="string"/>.</param>
+            /// <param name="price">The price<see cref="double"/>.</param>
+            /// <param name="description">The description<see cref="string"/>.</param>
+            /// <returns>The <see cref="TestFixtureBuilder"/>.</returns>
             public TestFixtureBuilder WithStockKeepingUnit(string barcode, double price, string description)
             {
                 var sku = Mock.Of<IStockKeepingUnit>(x => x.Barcode == barcode

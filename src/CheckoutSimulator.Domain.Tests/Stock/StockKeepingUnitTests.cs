@@ -2,7 +2,6 @@
 
 namespace CheckoutSimulator.Domain.Tests.Stock
 {
-    using System;
     using AutoFixture;
     using CheckoutSimulator.Domain;
     using FluentAssertions;
@@ -24,28 +23,8 @@ namespace CheckoutSimulator.Domain.Tests.Stock
         }
 
         /// <summary>
-        /// The Create_StateUnderTest_ExpectedBehavior.
+        /// The Create_Sets_Properties.
         /// </summary>
-        [Fact]
-        public void Should_Implement_IStockKeepingUnit()
-        {
-            // Arrange
-            var testFixture = new TestFixtureBuilder();
-            var sut = testFixture.BuildSut();
-
-            // Assert
-            sut.Should().BeAssignableTo<IStockKeepingUnit>();
-        }
-
-        /// <summary>
-        /// Methods Guards Against Null Args.
-        /// </summary>
-        [Fact]
-        public void Methods_GuardAgainstNullArgs()
-        {
-            AssertMethodsGuardAgainstNullArgs<StockKeepingUnit>();
-        }
-
         [Fact]
         public void Create_Sets_Properties()
         {
@@ -61,6 +40,29 @@ namespace CheckoutSimulator.Domain.Tests.Stock
             sut.Barcode.Should().Be(expectedBarcode);
             sut.UnitPrice.Should().Be(expectedUnitPrice);
             sut.Description.Should().Be(expectedDescription);
+        }
+
+        /// <summary>
+        /// Methods Guards Against Null Args.
+        /// </summary>
+        [Fact]
+        public void Methods_GuardAgainstNullArgs()
+        {
+            AssertMethodsGuardAgainstNullArgs<StockKeepingUnit>();
+        }
+
+        /// <summary>
+        /// The Create_StateUnderTest_ExpectedBehavior.
+        /// </summary>
+        [Fact]
+        public void Should_Implement_IStockKeepingUnit()
+        {
+            // Arrange
+            var testFixture = new TestFixtureBuilder();
+            var sut = testFixture.BuildSut();
+
+            // Assert
+            sut.Should().BeAssignableTo<IStockKeepingUnit>();
         }
 
         /// <summary>

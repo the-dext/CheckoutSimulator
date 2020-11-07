@@ -1,20 +1,19 @@
+// Checkout Simulator by Chris Dexter, file="TillFactoryTests.cs"
+
 namespace CheckoutSimulator.Domain.Tests
 {
-    using AutoFixture;
-    using AutoFixture.AutoMoq;
-    using AutoFixture.Idioms;
-    using CheckoutSimulator.Domain;
-    using CheckoutSimulator.Domain.Repositories;
-    using FluentAssertions;
-    using FluentAssertions.Execution;
-    using Moq;
     using System;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
+    using CheckoutSimulator.Domain;
+    using CheckoutSimulator.Domain.Repositories;
+    using Moq;
     using Xunit;
     using static TestUtils.TestIdioms;
 
+    /// <summary>
+    /// Defines the <see cref="TillFactoryTests" />.
+    /// </summary>
     public class TillFactoryTests
     {
         /// <summary>
@@ -26,16 +25,10 @@ namespace CheckoutSimulator.Domain.Tests
             AssertConstructorsGuardAgainstNullArgs<TillFactory>();
         }
 
-
         /// <summary>
-        /// Methods Guards Against Null Args.
+        /// The CreateTillAsync_Calls_Repository.
         /// </summary>
-        [Fact]
-        public void Methods_GuardAgainstNullArgs()
-        {
-            AssertMethodsGuardAgainstNullArgs<TillFactory>();
-        }
-
+        /// <returns>The <see cref="Task"/>.</returns>
         [Fact]
         public async Task CreateTillAsync_Calls_Repository()
         {
@@ -50,10 +43,25 @@ namespace CheckoutSimulator.Domain.Tests
             testFixture.MockStockRepository.Verify(x => x.GetStockItemsAsync(), Times.Once);
         }
 
+        /// <summary>
+        /// Methods Guards Against Null Args.
+        /// </summary>
+        [Fact]
+        public void Methods_GuardAgainstNullArgs()
+        {
+            AssertMethodsGuardAgainstNullArgs<TillFactory>();
+        }
+
+        /// <summary>
+        /// Defines the <see cref="TestFixtureBuilder" />.
+        /// </summary>
         private class TestFixtureBuilder
         {
             public Mock<IStockRepository> MockStockRepository;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="TestFixtureBuilder"/> class.
+            /// </summary>
             public TestFixtureBuilder()
             {
                 this.MockStockRepository = new Mock<IStockRepository>();
@@ -61,6 +69,10 @@ namespace CheckoutSimulator.Domain.Tests
                     .Returns(Task.FromResult(Array.Empty<IStockKeepingUnit>().AsEnumerable()));
             }
 
+            /// <summary>
+            /// The BuildSut.
+            /// </summary>
+            /// <returns>The <see cref="TillFactory"/>.</returns>
             public TillFactory BuildSut()
             {
                 return new TillFactory(this.MockStockRepository.Object);
