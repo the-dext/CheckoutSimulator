@@ -2,11 +2,13 @@
 
 namespace CheckoutSimulator.Application.Setup
 {
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using Autofac;
     using CheckoutSimulator.Application.CommandHandlers;
     using CheckoutSimulator.Application.Commands;
+    using CheckoutSimulator.Application.Queries;
     using CheckoutSimulator.Domain;
     using MediatR;
     using MediatR.Extensions.Autofac.DependencyInjection;
@@ -23,10 +25,12 @@ namespace CheckoutSimulator.Application.Setup
         /// <param name="builder">The builder <see cref="ContainerBuilder"/>.</param>
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterMediatR(Assembly.GetExecutingAssembly());
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsImplementedInterfaces();
 
+            builder.RegisterType<GetStockItemsQueryHandler>().As<IRequestHandler<GetStockItemsQuery, IStockKeepingUnit[]>>();
             builder.RegisterType<Till>().AsSelf().SingleInstance();
+
+            builder.RegisterMediatR(Assembly.GetExecutingAssembly());
             base.Load(builder);
         }
     }

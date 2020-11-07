@@ -1,18 +1,17 @@
-// Checkout Simulator by Chris Dexter, file="ScanItemCommandTests.cs"
+// Checkout Simulator by Chris Dexter, file="StockKeepingUnitTests.cs"
 
-namespace CheckoutSimulator.Application.Tests.Commands
+namespace CheckoutSimulator.Domain.Tests.Stock
 {
     using AutoFixture;
-    using CheckoutSimulator.Application.Commands;
+    using CheckoutSimulator.Domain;
     using FluentAssertions;
-    using MediatR;
     using Xunit;
     using static TestUtils.TestIdioms;
 
     /// <summary>
-    /// Defines the <see cref="ScanItemCommandTests" />.
+    /// Defines the <see cref="StockKeepingUnitTests" />.
     /// </summary>
-    public class ScanItemCommandTests
+    public class StockKeepingUnitTests
     {
         /// <summary>
         /// The Constructors Guards Against Null Args.
@@ -20,39 +19,30 @@ namespace CheckoutSimulator.Application.Tests.Commands
         [Fact]
         public void Constructor_GuardsAgainstNullArgs()
         {
-            AssertConstructorsGuardAgainstNullArgs<ScanItemCommand>();
+            AssertConstructorsGuardAgainstNullArgs<StockKeepingUnit>();
         }
 
         /// <summary>
-        /// Methods the guard against null arguments.
+        /// The Create_StateUnderTest_ExpectedBehavior.
         /// </summary>
         [Fact]
-        public void Methods_GuardAgainstNullArgs()
-        {
-            AssertMethodsGuardAgainstNullArgs<ScanItemCommand>();
-        }
-
-        /// <summary>
-        /// The ScanItemCommand_Is_Typeof_Request.
-        /// </summary>
-        [Fact]
-        public void ScanItemCommand_Is_Typeof_Request()
+        public void Should_Implement_IStockKeepingUnit()
         {
             // Arrange
             var testFixture = new TestFixtureBuilder();
             var sut = testFixture.BuildSut();
 
-            // Act & assert
-            sut.Should().BeAssignableTo<IRequest<bool>>();
+            // Assert
+            sut.Should().BeAssignableTo<IStockKeepingUnit>();
         }
 
         /// <summary>
-        /// Writable the properties behave as expected.
+        /// Methods Guards Against Null Args.
         /// </summary>
         [Fact]
-        public void WritableProperties_Behave()
+        public void Methods_GuardAgainstNullArgs()
         {
-            AssertWritablePropertiesBehaveAsExpected<ScanItemCommand>();
+            AssertMethodsGuardAgainstNullArgs<StockKeepingUnit>();
         }
 
         /// <summary>
@@ -73,10 +63,14 @@ namespace CheckoutSimulator.Application.Tests.Commands
             /// <summary>
             /// The BuildSut.
             /// </summary>
-            /// <returns>The <see cref="ScanItemCommand"/>.</returns>
-            public ScanItemCommand BuildSut()
+            /// <returns>The <see cref="StockKeepingUnit"/>.</returns>
+            public StockKeepingUnit BuildSut()
             {
-                return this.Fixture.Create<ScanItemCommand>();
+                return StockKeepingUnit.Create(
+                    this.Fixture.Create<string>(),
+                    this.Fixture.Create<double>(),
+                    this.Fixture.Create<string>()
+                );
             }
         }
     }

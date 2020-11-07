@@ -23,7 +23,7 @@ namespace CheckoutSimulator.Application.Tests.CommandHandlers
         [Fact]
         public void Constructor_GuardsAgainstNullArgs()
         {
-            AssertConstructorsGuardAgainstNull<ScanItemCommandHandler>();
+            AssertConstructorsGuardAgainstNullArgs<ScanItemCommandHandler>();
         }
 
         /// <summary>

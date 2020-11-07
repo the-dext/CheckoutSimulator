@@ -20,6 +20,7 @@ namespace CheckoutSimulator.Console.Setup
         {
             var builder = new ContainerBuilder();
             builder.RegisterAssemblyModules(Assembly.GetAssembly(typeof(CheckoutSimulator.Application.Setup.AutofacModule)));
+            builder.RegisterAssemblyModules(Assembly.GetAssembly(typeof(CheckoutSimulator.Persistence.Setup.AutofacModule)));
             return builder.Build();
         }
     }

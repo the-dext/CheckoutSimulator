@@ -3,12 +3,14 @@
 namespace CheckoutSimulator.Console
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading.Tasks;
     using Autofac;
     using CheckoutSimulator.Application.Commands;
+    using CheckoutSimulator.Application.Queries;
     using CheckoutSimulator.Console.Setup;
     using MediatR;
 
@@ -22,7 +24,7 @@ namespace CheckoutSimulator.Console
 
         private readonly IMediator AppMediator;
 
-        private (string KeyboadShortCut, string Prompt, Func<Task<bool>> Function)[] Commands;
+        private List<(string KeyboadShortCut, string Prompt, Func<Task<bool>> Function)> Commands;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Application"/> class.
@@ -32,8 +34,6 @@ namespace CheckoutSimulator.Console
             var composition = new CompositionRoot();
             Container = composition.ConfigureIoc();
             this.AppMediator = Container.Resolve<IMediator>();
-
-            this.SetupCommands();
         }
 
         /// <summary>
@@ -44,6 +44,7 @@ namespace CheckoutSimulator.Console
         {
             try
             {
+                await this.SetupCommands();
                 this.PrintAppBanner();
                 this.PrintOptions();
                 await this.WaitForCommand();
@@ -80,13 +81,29 @@ namespace CheckoutSimulator.Console
         /// <summary>
         /// The SetupCommands.
         /// </summary>
-        private void SetupCommands()
+        private async Task SetupCommands()
         {
-            this.Commands = new (string KeyBoardShortcut, string Prompt, Func<Task<bool>> Function)[]
+            var stockItems = (await this.AppMediator.Send(new GetStockItemsQuery()))
+                .OrderBy(x => x.Description);
+
+            this.Commands = new List<(string KeyBoardShortcut, string Prompt, Func<Task<bool>> Function)>()
             {
                 ("Q", "Quit Application", () => { Environment.Exit(0); return Task.FromResult(true); }),
-                ("1", "Scan Biscuits", async () => await this.AppMediator.Send(new ScanItemCommand("123456"))),
             };
+
+            int keyCode = 1;
+            foreach (var stockItem in stockItems)
+            {
+                this.Commands.Add(
+                    (keyCode.ToString(),
+                    stockItem.Description,
+                    async () =>
+                    {
+                        return await this.AppMediator.Send(new ScanItemCommand(stockItem.Barcode));
+                    }
+                ));
+                keyCode++;
+            }
         }
 
         /// <summary>

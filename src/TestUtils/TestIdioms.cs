@@ -5,6 +5,7 @@
 namespace TestUtils
 {
     using AutoFixture;
+    using AutoFixture.AutoMoq;
     using AutoFixture.Idioms;
 
     /// <summary>
@@ -16,9 +17,9 @@ namespace TestUtils
         /// Asserts that constructors guard against null arguments
         /// </summary>
         /// <typeparam name="T">.</typeparam>
-        public static void AssertConstructorsGuardAgainstNull<T>()
+        public static void AssertConstructorsGuardAgainstNullArgs<T>()
         {
-            var fixture = new Fixture();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());;
             var assertion = new GuardClauseAssertion(fixture);
             var constructors = typeof(T).GetConstructors();
             assertion.Verify(constructors);
@@ -30,7 +31,7 @@ namespace TestUtils
         /// <typeparam name="T"></typeparam>
         public static void AssertMethodsGuardAgainstNullArgs<T>()
         {
-            var fixture = new Fixture();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());;
             var assertion = new GuardClauseAssertion(fixture);
             var constructors = typeof(T).GetMethods();
             assertion.Verify(constructors);
@@ -42,7 +43,7 @@ namespace TestUtils
         /// <typeparam name="T"></typeparam>
         public static void AssertWritablePropertiesBehaveAsExpected<T>()
         {
-            var fixture = new Fixture();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());;
             var assertion = new WritablePropertyAssertion(fixture);
             var constructors = typeof(T).GetMethods();
             assertion.Verify(constructors);
