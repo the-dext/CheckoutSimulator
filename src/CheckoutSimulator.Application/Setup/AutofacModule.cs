@@ -5,6 +5,7 @@ namespace CheckoutSimulator.Application.Setup
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
+    using System.Threading.Tasks;
     using Autofac;
     using CheckoutSimulator.Application.CommandHandlers;
     using CheckoutSimulator.Application.Commands;
@@ -28,9 +29,15 @@ namespace CheckoutSimulator.Application.Setup
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsImplementedInterfaces();
 
             builder.RegisterType<GetStockItemsQueryHandler>().As<IRequestHandler<GetStockItemsQuery, IStockKeepingUnit[]>>();
-            builder.RegisterType<Till>().AsSelf().SingleInstance();
-
             builder.RegisterMediatR(Assembly.GetExecutingAssembly());
+
+            builder.Register<Till>((ctx) =>
+            {
+                return ctx.Resolve<TillFactory>()
+                .CreateTillAsync()
+                .Result;
+            }).AsSelf().SingleInstance();
+
             base.Load(builder);
         }
     }

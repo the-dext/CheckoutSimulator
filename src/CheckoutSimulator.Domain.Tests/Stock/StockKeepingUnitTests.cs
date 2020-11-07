@@ -2,6 +2,7 @@
 
 namespace CheckoutSimulator.Domain.Tests.Stock
 {
+    using System;
     using AutoFixture;
     using CheckoutSimulator.Domain;
     using FluentAssertions;
@@ -43,6 +44,23 @@ namespace CheckoutSimulator.Domain.Tests.Stock
         public void Methods_GuardAgainstNullArgs()
         {
             AssertMethodsGuardAgainstNullArgs<StockKeepingUnit>();
+        }
+
+        [Fact]
+        public void Create_Sets_Properties()
+        {
+            // Arrange
+            var expectedBarcode = "A12";
+            var expectedUnitPrice = 0.30;
+            var expectedDescription = "Apple";
+
+            // Act
+            var sut = StockKeepingUnit.Create(expectedBarcode, expectedUnitPrice, expectedDescription);
+
+            // Assert
+            sut.Barcode.Should().Be(expectedBarcode);
+            sut.UnitPrice.Should().Be(expectedUnitPrice);
+            sut.Description.Should().Be(expectedDescription);
         }
 
         /// <summary>
