@@ -117,9 +117,13 @@ namespace CheckoutSimulator.Console
                     stockItem.Description,
                     async () =>
                     {
-                        await this.AppMediator.Send(new ScanItemCommand(stockItem.Barcode));
-                        Console.WriteLine($"1 {stockItem.Description} @{stockItem.UnitPrice:C2}");
-                        return true;
+                        var scanningResult = await this.AppMediator.Send(new ScanItemCommand(stockItem.Barcode));
+                        if (scanningResult.Success)
+                        {
+                            Console.WriteLine($"1 {stockItem.Description} @{stockItem.UnitPrice:C2}");
+                            return true;
+                        }
+                        return false;
                     }
                 ));
                 keyCode++;
@@ -148,8 +152,6 @@ namespace CheckoutSimulator.Console
                         var cmdResult = await this.Commands
                             .First(c => c.KeyboadShortCut.Equals(keyboardInput, StringComparison.OrdinalIgnoreCase))
                             .Function();
-
-                        System.Diagnostics.Debug.WriteLine($"Command returned:{cmdResult}");
                     }
                 }
             }

@@ -3,12 +3,13 @@
 namespace CheckoutSimulator.Application.Commands
 {
     using Ardalis.GuardClauses;
+    using CheckoutSimulator.Domain;
     using MediatR;
 
     /// <summary>
     /// Defines the <see cref="ScanItemCommand"/>.
     /// </summary>
-    public class ScanItemCommand : IRequest<bool>
+    public class ScanItemCommand : IRequest<IScanningResult>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ScanItemCommand"/> class.

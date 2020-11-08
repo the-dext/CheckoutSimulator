@@ -57,12 +57,7 @@ namespace CheckoutSimulator.Domain.Tests.Stock
         [Fact]
         public void Should_Implement_IStockKeepingUnit()
         {
-            // Arrange
-            var testFixture = new TestFixtureBuilder();
-            var sut = testFixture.BuildSut();
-
-            // Assert
-            sut.Should().BeAssignableTo<IStockKeepingUnit>();
+            typeof(StockKeepingUnit).Should().BeAssignableTo<IStockKeepingUnit>();
         }
 
         /// <summary>

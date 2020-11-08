@@ -9,7 +9,7 @@ namespace CheckoutSimulator.Domain
         void CompleteScanning();
         IEnumerable<string> ListScannedItems();
         double RequestTotalPrice();
-        void ScanItem(string barcode);
+        IScanningResult ScanItem(string barcode);
         void VoidItems();
     }
 }

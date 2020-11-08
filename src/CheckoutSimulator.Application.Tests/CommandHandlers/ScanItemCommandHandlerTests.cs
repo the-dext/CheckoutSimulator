@@ -41,12 +41,7 @@ namespace CheckoutSimulator.Application.Tests.CommandHandlers
         [Fact]
         public void ScanItemCommandHandler_Can_Handle_ScanItemCommand()
         {
-            // Arrange
-            var testFixture = new TestFixtureBuilder();
-            var sut = testFixture.BuildSut();
-
-            // Act & assert
-            sut.Should().BeAssignableTo<IRequestHandler<ScanItemCommand, bool>>();
+            typeof(ScanItemCommandHandler).Should().BeAssignableTo<IRequestHandler<ScanItemCommand, IScanningResult>>();
         }
 
         /// <summary>

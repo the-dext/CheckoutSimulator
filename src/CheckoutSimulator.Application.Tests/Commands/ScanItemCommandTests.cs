@@ -4,6 +4,7 @@ namespace CheckoutSimulator.Application.Tests.Commands
 {
     using AutoFixture;
     using CheckoutSimulator.Application.Commands;
+    using CheckoutSimulator.Domain;
     using FluentAssertions;
     using MediatR;
     using Xunit;
@@ -38,12 +39,7 @@ namespace CheckoutSimulator.Application.Tests.Commands
         [Fact]
         public void ScanItemCommand_Is_Typeof_Request()
         {
-            // Arrange
-            var testFixture = new TestFixtureBuilder();
-            var sut = testFixture.BuildSut();
-
-            // Act & assert
-            sut.Should().BeAssignableTo<IRequest<bool>>();
+            typeof(ScanItemCommand).Should().BeAssignableTo<IRequest<IScanningResult>>();
         }
 
         /// <summary>

@@ -53,7 +53,10 @@ namespace CheckoutSimulator.Domain.Tests
             var expectedBarcodes = new List<string> { "B15", "A12", "B15", "B15" };
 
             // Act
-            expectedBarcodes.ForEach(sut.ScanItem);
+            foreach (var barcode in expectedBarcodes)
+            {
+                _ = sut.ScanItem(barcode);
+            }
 
             // Assert
             sut.ListScannedItems().Should().BeEquivalentTo(expectedBarcodes);
@@ -162,6 +165,12 @@ namespace CheckoutSimulator.Domain.Tests
             // Assert
             originalItemCount.Should().Be(2);
             sut.ListScannedItems().Count().Should().Be(0);
+        }
+
+        [Fact]
+        public void Till_Implements_ITill()
+        {
+            typeof(Till).Should().BeAssignableTo<ITill>();
         }
 
         /// <summary>

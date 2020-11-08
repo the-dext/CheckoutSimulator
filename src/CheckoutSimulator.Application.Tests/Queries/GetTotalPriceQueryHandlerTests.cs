@@ -2,11 +2,13 @@
 
 namespace CheckoutSimulator.Application.Tests.Queries
 {
+    using System;
     using System.Threading.Tasks;
     using AutoFixture;
     using CheckoutSimulator.Application.Queries;
     using CheckoutSimulator.Domain;
     using FluentAssertions;
+    using MediatR;
     using Moq;
     using Xunit;
     using static TestUtils.TestIdioms;
@@ -23,6 +25,12 @@ namespace CheckoutSimulator.Application.Tests.Queries
         public void Constructor_GuardsAgainstNullArgs()
         {
             AssertConstructorsGuardAgainstNullArgs<GetTotalPriceQueryHandler>();
+        }
+
+        [Fact]
+        public void GetTotalPriceQueryHandler_Is_Typeof_IRequest()
+        {
+            typeof(GetTotalPriceQueryHandler).Should().BeAssignableTo<IRequestHandler<GetTotalPriceQuery, double>>();
         }
 
         /// <summary>

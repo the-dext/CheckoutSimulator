@@ -12,7 +12,7 @@ namespace CheckoutSimulator.Application.CommandHandlers
     /// <summary>
     /// Defines the <see cref="ScanItemCommandHandler"/>.
     /// </summary>
-    public class ScanItemCommandHandler : IRequestHandler<ScanItemCommand, bool>
+    public class ScanItemCommandHandler : IRequestHandler<ScanItemCommand, IScanningResult>
     {
         private readonly ITill till;
 
@@ -31,13 +31,11 @@ namespace CheckoutSimulator.Application.CommandHandlers
         /// <param name="cmd">The request <see cref="ScanItemCommand"/>.</param>
         /// <param name="cancellationToken">The cancellationToken <see cref="CancellationToken"/>.</param>
         /// <returns>The <see cref="Task{bool}"/>.</returns>
-        public Task<bool> Handle(ScanItemCommand cmd, CancellationToken cancellationToken)
+        public Task<IScanningResult> Handle(ScanItemCommand cmd, CancellationToken cancellationToken)
         {
             _ = Guard.Against.Null(cmd, nameof(cmd));
 
-            this.till.ScanItem(cmd.Barcode);
-
-            return Task.FromResult(true);
+            return Task.FromResult(this.till.ScanItem(cmd.Barcode));
         }
     }
 }

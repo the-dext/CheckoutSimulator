@@ -55,12 +55,7 @@ namespace CheckoutSimulator.Application.Tests.Queries
         [Fact]
         public async Task Is_Assignable_To_IRequestHandler()
         {
-            // Arrange
-            var testFixture = new TestFixtureBuilder();
-            var sut = testFixture.BuildSut();
-
-            // Assert
-            sut.Should().BeAssignableTo<IRequestHandler<GetStockItemsQuery, IStockKeepingUnit[]>>();
+            typeof(GetStockItemsQueryHandler).Should().BeAssignableTo<IRequestHandler<GetStockItemsQuery, IStockKeepingUnit[]>>();
         }
 
         /// <summary>

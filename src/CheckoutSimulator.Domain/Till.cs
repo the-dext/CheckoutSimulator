@@ -59,7 +59,7 @@ namespace CheckoutSimulator.Domain
         /// The ScanItem.
         /// </summary>
         /// <param name="stockItem">The stockItem<see cref="IStockKeepingUnit"/>.</param>
-        public void ScanItem(string barcode)
+        public IScanningResult ScanItem(string barcode)
         {
             Guard.Against.Null(barcode, nameof(barcode));
 
@@ -67,6 +67,7 @@ namespace CheckoutSimulator.Domain
                 ?? throw new UnknownItemException($"Unrecognised barcode: {barcode}");
 
             this.scannedItems.Add(barcode);
+            return new ScanningResult(true, null);
         }
 
         /// <summary>
