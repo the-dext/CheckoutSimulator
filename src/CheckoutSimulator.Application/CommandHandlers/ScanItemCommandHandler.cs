@@ -14,13 +14,13 @@ namespace CheckoutSimulator.Application.CommandHandlers
     /// </summary>
     public class ScanItemCommandHandler : IRequestHandler<ScanItemCommand, bool>
     {
-        private readonly Till till;
+        private readonly ITill till;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScanItemCommandHandler"/> class.
         /// </summary>
-        /// <param name="till">The till <see cref="Till"/>.</param>
-        public ScanItemCommandHandler(Till till)
+        /// <param name="till">The till <see cref="ITill"/>.</param>
+        public ScanItemCommandHandler(ITill till)
         {
             this.till = Guard.Against.Null(till, nameof(till));
         }

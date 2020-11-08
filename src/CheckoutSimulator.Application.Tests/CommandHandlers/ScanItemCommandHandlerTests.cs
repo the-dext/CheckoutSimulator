@@ -65,7 +65,7 @@ namespace CheckoutSimulator.Application.Tests.CommandHandlers
         {
             public Fixture Fixture;
 
-            public Mock<Till> mockTill;
+            public Mock<ITill> mockTill;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="TestFixtureBuilder"/> class.
@@ -73,7 +73,7 @@ namespace CheckoutSimulator.Application.Tests.CommandHandlers
             public TestFixtureBuilder()
             {
                 this.Fixture = new Fixture();
-                this.mockTill = this.Fixture.Freeze<Mock<Till>>();
+                this.mockTill = this.Fixture.Freeze<Mock<ITill>>();
             }
 
             /// <summary>

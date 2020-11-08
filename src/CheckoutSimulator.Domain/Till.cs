@@ -13,11 +13,11 @@ namespace CheckoutSimulator.Domain
     /// <summary>
     /// Defines the <see cref="Till"/>.
     /// </summary>
-    public class Till
+    public class Till : ITill
     {
         private readonly List<string> scannedItems = new List<string>();
 
-        public Till(): this(Array.Empty<IStockKeepingUnit>())
+        public Till() : this(Array.Empty<IStockKeepingUnit>())
         {
         }
 

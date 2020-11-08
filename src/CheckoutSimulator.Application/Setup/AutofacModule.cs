@@ -37,7 +37,7 @@ namespace CheckoutSimulator.Application.Setup
                 return ctx.Resolve<TillFactory>()
                 .CreateTillAsync()
                 .Result;
-            }).AsSelf().SingleInstance();
+            }).As<ITill>().SingleInstance();
 
             base.Load(builder);
         }

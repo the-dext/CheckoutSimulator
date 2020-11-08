@@ -13,13 +13,13 @@ namespace CheckoutSimulator.Application.Queries
     /// </summary>
     public class GetTotalPriceQueryHandler : IRequestHandler<GetTotalPriceQuery, double>
     {
-        private readonly Till till;
+        private readonly ITill till;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetTotalPriceQueryHandler"/> class.
         /// </summary>
-        /// <param name="till">The till <see cref="Till"/>.</param>
-        public GetTotalPriceQueryHandler(Till till)
+        /// <param name="till">The till <see cref="ITill"/>.</param>
+        public GetTotalPriceQueryHandler(ITill till)
         {
             this.till = Guard.Against.Null(till, nameof(till));
         }

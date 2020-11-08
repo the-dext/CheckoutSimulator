@@ -34,8 +34,9 @@ namespace CheckoutSimulator.Application.Tests.Queries
         {
             // Arrange
             var testFixture = new TestFixtureBuilder();
+            const double ExpectedUnitPrice = 0.45;
             var sut = testFixture
-                .WithScannedItem(0.45)
+                .WithTotalCheckoutPrice(ExpectedUnitPrice)
                 .BuildSut();
 
             var cancellationToken = default(global::System.Threading.CancellationToken);
@@ -44,7 +45,7 @@ namespace CheckoutSimulator.Application.Tests.Queries
             var result = await sut.Handle(new GetTotalPriceQuery(), cancellationToken);
 
             // Assert
-            result.Should().Be(0.45);
+            result.Should().Be(ExpectedUnitPrice);
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace CheckoutSimulator.Application.Tests.Queries
         {
             public Fixture Fixture;
 
-            public Till Till;
+            public ITill Till;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="TestFixtureBuilder"/> class.
@@ -87,12 +88,11 @@ namespace CheckoutSimulator.Application.Tests.Queries
             /// </summary>
             /// <param name="price">The price<see cref="double"/>.</param>
             /// <returns>The <see cref="TestFixtureBuilder"/>.</returns>
-            public TestFixtureBuilder WithScannedItem(double price)
+            public TestFixtureBuilder WithTotalCheckoutPrice(double price)
             {
                 var sku = Mock.Of<IStockKeepingUnit>(x => x.Barcode == "B14" && x.UnitPrice == price && x.Description == "Biscuits");
-                this.Till = new Till(new IStockKeepingUnit[] { sku });
-
-                this.Till.ScanItem(sku.Barcode);
+                this.Till = Mock.Of<ITill>();
+                Mock.Get(this.Till).Setup(x => x.RequestTotalPrice()).Returns(price);
                 return this;
             }
         }
