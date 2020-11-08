@@ -1,5 +1,7 @@
 ﻿// Checkout Simulator by Chris Dexter, file="ItemDiscount.cs"
-
+/// <summary>
+/// This discount just proves the concept of injecting different item discount types into the offers.
+/// </summary>
 namespace CheckoutSimulator.Domain.Offers
 {
     using System.Linq;
@@ -49,14 +51,17 @@ namespace CheckoutSimulator.Domain.Offers
             if (itemBeingScanned.Barcode == this.Barcode)
             {
                 // if there is one other item, that hasn't been included in a discount already then this discount can apply
-                var previousApplicableItem = previouslyScannedItems.FirstOrDefault(x =>
-                    x.Barcode == itemBeingScanned.Barcode &&
-                    x.IsIncludedInADiscountOffer == false);
+                var previousApplicableItems = previouslyScannedItems.Where(x =>
+                    x.Barcode == itemBeingScanned.Barcode && x.IsIncludedInADiscountOffer == false)
+                .Take(this.ItemsRequired - 1);
 
-                if (previousApplicableItem != null)
+                if (previousApplicableItems.Count() == this.ItemsRequired - 1)
                 {
-                    previousApplicableItem.SetIncludedInDiscountOffer(true);
-                    itemBeingScanned.ApplyDiscount(this.Description, 0);
+                    foreach (var item in previousApplicableItems)
+                    {
+                        item.SetIncludedInDiscountOffer(true);
+                    }
+                    itemBeingScanned.ApplyDiscount(this.Description, this.DiscountPrice);
                 }
             }
         }

@@ -23,7 +23,9 @@ namespace CheckoutSimulator.Persistence
         {
             var discounts = new List<IDiscount>()
             {
-                new BuyOneGetOneFree("Buy One-Get One Free on Biscuits", "B15", 2, 0)
+                new BuyOneGetOneFree("Buy One-Get One Free on Eggs", "C40", 2, 0),
+                new MultiBuy("2 for 45p on Biscuits", "B15", itemsRequired: 2, discountPrice: 0.15),
+                new MultiBuy("3 Apples for £1.30 ", "A99", itemsRequired: 3,  discountPrice: .30d),
             };
 
             return Task.FromResult(discounts.AsEnumerable());

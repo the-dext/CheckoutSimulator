@@ -118,8 +118,8 @@ namespace CheckoutSimulator.Domain.Tests
 
             var testFixture = new TestFixtureBuilder();
             var sut = testFixture
-                .WithStockKeepingUnit(Barcode, ExpectedPrice, "Biscuits")
-                .WithMockBuyOneGetOneFreeDiscount(Barcode)
+                .WithStockKeepingUnit(Barcode, 0.30, "Biscuits")
+                .WithMockDiscount(Barcode)
                 .BuildSut();
 
             // Act
@@ -267,11 +267,11 @@ namespace CheckoutSimulator.Domain.Tests
                 return this;
             }
 
-            public TestFixtureBuilder WithMockBuyOneGetOneFreeDiscount(string barcode)
+            public TestFixtureBuilder WithMockDiscount(string barcode)
             {
                 var callBacks = new Queue<Action<IScannedItem, IScannedItem[]>>();
                 callBacks.Enqueue((scannedItem, previouslyScannedItems) => Debug.WriteLine("first callback, no discount"));
-                callBacks.Enqueue((scannedItem, previouslyScannedItems) => scannedItem.ApplyDiscount("mock discount", scannedItem.UnitPrice));
+                callBacks.Enqueue((scannedItem, previouslyScannedItems) => scannedItem.ApplyDiscount("mock discount", 0.15));
 
                 var discount = new Mock<IItemDiscount>();
                 discount.Setup(x => x.ApplyDiscount(It.Is<IScannedItem>(item => item.Barcode == barcode), It.IsAny<IScannedItem[]>()))

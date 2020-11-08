@@ -5,11 +5,9 @@ namespace CheckoutSimulator.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using Ardalis.GuardClauses;
     using CheckoutSimulator.Domain.Exceptions;
     using CheckoutSimulator.Domain.Offers;
-    using CheckoutSimulator.Domain.Repositories;
     using CheckoutSimulator.Domain.Scanning;
 
     /// <summary>
@@ -17,13 +15,19 @@ namespace CheckoutSimulator.Domain
     /// </summary>
     public class Till : ITill
     {
-        private readonly List<IScannedItem> scannedItems = new List<IScannedItem>();
         private readonly IItemDiscount[] itemDiscounts;
+
         private readonly ISaleDiscount[] saleDiscounts;
+
+        private readonly List<IScannedItem> scannedItems = new List<IScannedItem>();
+
+        private readonly IStockKeepingUnit[] stockKeepingUnits;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Till"/> class.
         /// </summary>
+        /// <param name="stockKeepingUnits">The stockKeepingUnits<see cref="IStockKeepingUnit[]"/>.</param>
+        /// <param name="discounts">The discounts<see cref="IDiscount[]"/>.</param>
         public Till(IStockKeepingUnit[] stockKeepingUnits, IDiscount[] discounts)
         {
             this.ObjectId = Guid.NewGuid();
@@ -38,11 +42,9 @@ namespace CheckoutSimulator.Domain
         }
 
         /// <summary>
-        /// Gets the object identifier. Useful for debugging to check object references are different/equal...
+        /// Gets the object identifier. Useful for debugging to check object references are different/equal....
         /// </summary>
         public Guid ObjectId { get; }
-
-        private IStockKeepingUnit[] stockKeepingUnits;
 
         /// <summary>
         /// The CompleteScanning.
@@ -62,9 +64,20 @@ namespace CheckoutSimulator.Domain
         }
 
         /// <summary>
+        /// The RequestTotalPrice.
+        /// </summary>
+        /// <returns>The <see cref="double"/>.</returns>
+        public double RequestTotalPrice()
+        {
+            var result = this.scannedItems.Sum(x => x.IsDiscounted ? x.PriceAdjustment : x.UnitPrice);
+            return Math.Round(result,2);
+        }
+
+        /// <summary>
         /// The ScanItem.
         /// </summary>
-        /// <param name="stockItem">The stockItem<see cref="IStockKeepingUnit"/>.</param>
+        /// <param name="barcode">The barcode<see cref="string"/>.</param>
+        /// <returns>The <see cref="IScanningResult"/>.</returns>
         public IScanningResult ScanItem(string barcode)
         {
             Guard.Against.Null(barcode, nameof(barcode));
@@ -79,16 +92,6 @@ namespace CheckoutSimulator.Domain
             return new ScanningResult(true, momento.Message);
         }
 
-        private ScannedItemMomento ApplyItemDiscounts(ScannedItemMomento momento)
-        {
-            foreach (var itemDiscount in this.itemDiscounts)
-            {
-                itemDiscount.ApplyDiscount(momento, this.scannedItems.ToArray());
-            }
-
-            return momento;
-        }
-
         /// <summary>
         /// The VoidItems.
         /// </summary>
@@ -97,9 +100,19 @@ namespace CheckoutSimulator.Domain
             this.scannedItems.Clear();
         }
 
-        public double RequestTotalPrice()
+        /// <summary>
+        /// The ApplyItemDiscounts.
+        /// </summary>
+        /// <param name="momento">The momento<see cref="ScannedItemMomento"/>.</param>
+        /// <returns>The <see cref="ScannedItemMomento"/>.</returns>
+        private ScannedItemMomento ApplyItemDiscounts(ScannedItemMomento momento)
         {
-            return this.scannedItems.Sum(x => (x.UnitPrice - x.PriceAdjustment));
+            foreach (var itemDiscount in this.itemDiscounts)
+            {
+                itemDiscount.ApplyDiscount(momento, this.scannedItems.ToArray());
+            }
+
+            return momento;
         }
     }
 }
