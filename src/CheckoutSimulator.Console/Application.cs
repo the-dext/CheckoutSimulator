@@ -52,7 +52,7 @@ namespace CheckoutSimulator.Console
             catch (Exception ex)
             {
                 Debug.Write(ex);
-                Console.WriteLine("Command caused an exception: " + ex.Message);
+                WriteLine("Command caused an exception: " + ex.Message, ConsoleColor.Red);
             }
         }
 
@@ -61,10 +61,10 @@ namespace CheckoutSimulator.Console
         /// </summary>
         private void PrintAppBanner()
         {
-            Console.WriteLine("******************************");
-            Console.WriteLine("***** Checkout Simulator *****");
-            Console.WriteLine("******************************");
-            Console.WriteLine();
+            WriteLine("******************************");
+            WriteLine("***** Checkout Simulator *****");
+            WriteLine("******************************");
+            WriteLine();
         }
 
         /// <summary>
@@ -76,12 +76,26 @@ namespace CheckoutSimulator.Console
             {
                 if (cmd.KeyboadShortCut != string.Empty)
                 {
-                    Console.WriteLine($"{cmd.KeyboadShortCut}: {cmd.Prompt}");
+                    WriteLine($"{cmd.KeyboadShortCut}: {cmd.Prompt}");
                 }
                 else
                 {
-                    Console.WriteLine();
+                    WriteLine();
                 }
+            }
+        }
+
+        private static void WriteLine(string output = null, ConsoleColor colour = ConsoleColor.White)
+        {
+            if (output != null)
+            {
+                Console.ForegroundColor = colour;
+                Console.WriteLine(output);
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+            else
+            {
+                Console.WriteLine();
             }
         }
 
@@ -98,8 +112,9 @@ namespace CheckoutSimulator.Console
                 {
                     var totalPrice = await this.AppMediator.Send(new GetTotalPriceQuery()).ConfigureAwait(true);
 
-                    Console.WriteLine($"*********");
-                    Console.WriteLine($"Total price so far: {totalPrice:C2}");
+                    WriteLine($"*********", ConsoleColor.Green);
+                    WriteLine($"Total price: {totalPrice:C2}", ConsoleColor.Green);
+                    WriteLine($"*********", ConsoleColor.Green);
 
                     return true;
                 }),
@@ -120,7 +135,7 @@ namespace CheckoutSimulator.Console
                         var scanningResult = await this.AppMediator.Send(new ScanItemCommand(stockItem.Barcode));
                         if (scanningResult.Success)
                         {
-                            Console.WriteLine($"1 {stockItem.Description} @{stockItem.UnitPrice:C2}");
+                            WriteLine($"1 {stockItem.Description} @{stockItem.UnitPrice:C2}", ConsoleColor.Green);
                             return true;
                         }
                         return false;
