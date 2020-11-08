@@ -70,6 +70,8 @@ namespace CheckoutSimulator.Console
             WriteLine("******************************");
             WriteLine("***** Checkout Simulator *****");
             WriteLine("******************************");
+            WriteLine();
+            WriteLine("-- Todays special offers are 3 Apples for £1.30, 2 Biscuits for .45p, and Buy-One-Get-One-Free on eggs --", ConsoleColor.Yellow);
         }
 
         /// <summary>
