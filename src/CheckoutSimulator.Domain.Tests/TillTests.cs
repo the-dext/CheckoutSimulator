@@ -8,6 +8,7 @@ namespace CheckoutSimulator.Domain.Tests
     using AutoFixture;
     using CheckoutSimulator.Domain;
     using CheckoutSimulator.Domain.Exceptions;
+    using CheckoutSimulator.Domain.Offers;
     using FluentAssertions;
     using Moq;
     using Xunit;
@@ -200,7 +201,7 @@ namespace CheckoutSimulator.Domain.Tests
             /// <returns>The <see cref="Till"/>.</returns>
             public Till BuildSut()
             {
-                var ret = new Till(this.StockKeepingUnits.ToArray());
+                var ret = new Till(this.StockKeepingUnits.ToArray(), Array.Empty<IDiscount>());
 
                 // apply post creation actions to set up test fixture state.
                 foreach (var action in this.postBuildActions)

@@ -6,6 +6,7 @@ namespace CheckoutSimulator.Domain.Tests
     using System.Linq;
     using System.Threading.Tasks;
     using CheckoutSimulator.Domain;
+    using CheckoutSimulator.Domain.Offers;
     using CheckoutSimulator.Domain.Repositories;
     using Moq;
     using Xunit;
@@ -58,6 +59,7 @@ namespace CheckoutSimulator.Domain.Tests
         private class TestFixtureBuilder
         {
             public Mock<IStockRepository> MockStockRepository;
+            public Mock<IDiscountRepository> MockDiscountsRepository;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="TestFixtureBuilder"/> class.
@@ -67,6 +69,10 @@ namespace CheckoutSimulator.Domain.Tests
                 this.MockStockRepository = new Mock<IStockRepository>();
                 this.MockStockRepository.Setup(x => x.GetStockItemsAsync())
                     .Returns(Task.FromResult(Array.Empty<IStockKeepingUnit>().AsEnumerable()));
+
+                this.MockDiscountsRepository = new Mock<IDiscountRepository>();
+                this.MockDiscountsRepository.Setup(x => x.GetDiscountsAsync())
+                    .Returns(Task.FromResult(Array.Empty<IDiscount>().AsEnumerable()));
             }
 
             /// <summary>
@@ -75,7 +81,7 @@ namespace CheckoutSimulator.Domain.Tests
             /// <returns>The <see cref="TillFactory"/>.</returns>
             public TillFactory BuildSut()
             {
-                return new TillFactory(this.MockStockRepository.Object);
+                return new TillFactory(this.MockStockRepository.Object, this.MockDiscountsRepository.Object);
             }
         }
     }

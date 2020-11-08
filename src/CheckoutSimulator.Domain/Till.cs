@@ -8,6 +8,7 @@ namespace CheckoutSimulator.Domain
     using System.Threading.Tasks;
     using Ardalis.GuardClauses;
     using CheckoutSimulator.Domain.Exceptions;
+    using CheckoutSimulator.Domain.Offers;
     using CheckoutSimulator.Domain.Repositories;
 
     /// <summary>
@@ -16,19 +17,22 @@ namespace CheckoutSimulator.Domain
     public class Till : ITill
     {
         private readonly List<string> scannedItems = new List<string>();
+        private readonly IDiscount[] discounts;
 
-        public Till() : this(Array.Empty<IStockKeepingUnit>())
-        {
-        }
+        //public Till() : this(Array.Empty<IStockKeepingUnit>())
+        //{
+        //}
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Till"/> class.
         /// </summary>
-        public Till(IStockKeepingUnit[] stockKeepingUnits)
+        public Till(IStockKeepingUnit[] stockKeepingUnits, IDiscount[] discounts)
         {
             this.ObjectId = Guid.NewGuid();
             System.Diagnostics.Debug.WriteLine($"Till created: {this.ObjectId}");
+
             this.stockKeepingUnits = Guard.Against.Null(stockKeepingUnits, nameof(stockKeepingUnits));
+            this.discounts = Guard.Against.Null(discounts, nameof(discounts));
         }
 
         /// <summary>
