@@ -23,7 +23,7 @@ namespace CheckoutSimulator.Persistence
         {
             var discounts = new List<IDiscount>()
             {
-                new BuyOneGetOneFree("Buy One-Get One Free on Biscuits", "B15")
+                new BuyOneGetOneFree("Buy One-Get One Free on Biscuits", "B15", 2, 0)
             };
 
             return Task.FromResult(discounts.AsEnumerable());

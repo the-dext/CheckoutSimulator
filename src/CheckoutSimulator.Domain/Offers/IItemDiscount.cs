@@ -17,10 +17,20 @@ namespace CheckoutSimulator.Domain.Offers
         string Barcode { get; }
 
         /// <summary>
+        /// Gets the DiscountPrice.
+        /// </summary>
+        double DiscountPrice { get; }
+
+        /// <summary>
+        /// Gets the ItemsRequired.
+        /// </summary>
+        int ItemsRequired { get; }
+
+        /// <summary>
         /// The ApplyDiscount.
         /// </summary>
-        /// <param name="scannedItem">The scannedItem <see cref="IScannedItem"/>.</param>
+        /// <param name="itemBeingScanned">The scannedItem <see cref="IScannedItem"/>.</param>
         /// <param name="previouslyScannedItems">The previouslyScannedItems <see cref="List{IScannedItem}"/>.</param>
-        void ApplyDiscount(IScannedItem scannedItem, IScannedItem[] previouslyScannedItems);
+        void ApplyDiscount(IScannedItem itemBeingScanned, IScannedItem[] previouslyScannedItems);
     }
 }

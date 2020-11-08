@@ -1,4 +1,4 @@
-﻿// Checkout Simulator by Chris Dexter, file="ItemDiscount.cs"
+﻿// Checkout Simulator by Chris Dexter, file="MultiBuy.cs"
 
 namespace CheckoutSimulator.Domain.Offers
 {
@@ -7,16 +7,15 @@ namespace CheckoutSimulator.Domain.Offers
     using CheckoutSimulator.Domain.Scanning;
 
     /// <summary>
-    /// Defines the <see cref="BuyOneGetOneFree"/>.
+    /// Defines the <see cref="MultiBuy" />.
     /// </summary>
-    public class BuyOneGetOneFree : IItemDiscount
+    public class MultiBuy : IItemDiscount
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BuyOneGetOneFree"/> class.
+        /// Initializes a new instance of the <see cref="MultiBuy"/> class.
         /// </summary>
-        /// <param name="description">The description <see cref="string"/>.</param>
-        /// <param name="barcode">The barcode <see cref="string"/>.</param>
-        public BuyOneGetOneFree(string description, string barcode, int itemsRequired, double discountPrice)
+        /// <param name="">The <see cref="(string description, string barcode, int itemsRequired, double discountPrice)"/>.</param>
+        public MultiBuy(string description, string barcode, int itemsRequired, double discountPrice)
         {
             this.Description = Guard.Against.NullOrWhiteSpace(description, nameof(description));
             this.Barcode = Guard.Against.NullOrWhiteSpace(barcode, nameof(barcode));
@@ -33,13 +32,21 @@ namespace CheckoutSimulator.Domain.Offers
         /// Gets the Description.
         /// </summary>
         public string Description { get; }
-        public int ItemsRequired { get; }
+
+        /// <summary>
+        /// Gets the DiscountPrice.
+        /// </summary>
         public double DiscountPrice { get; }
+
+        /// <summary>
+        /// Gets the ItemsRequired.
+        /// </summary>
+        public int ItemsRequired { get; }
 
         /// <summary>
         /// The ApplyDiscount.
         /// </summary>
-        /// <param name="itemBeingScanned">The scannedItem <see cref="IScannedItem"/>.</param>
+        /// <param name="itemBeingScanned">The scannedItem<see cref="IScannedItem"/>.</param>
         /// <param name="previouslyScannedItems">The previouslyScannedItems<see cref="IScannedItem[]"/>.</param>
         public void ApplyDiscount(IScannedItem itemBeingScanned, IScannedItem[] previouslyScannedItems)
         {
@@ -49,14 +56,17 @@ namespace CheckoutSimulator.Domain.Offers
             if (itemBeingScanned.Barcode == this.Barcode)
             {
                 // if there is one other item, that hasn't been included in a discount already then this discount can apply
-                var previousApplicableItem = previouslyScannedItems.FirstOrDefault(x =>
-                    x.Barcode == itemBeingScanned.Barcode &&
-                    x.IsIncludedInADiscountOffer == false);
+                var previousApplicableItems = previouslyScannedItems.Where(x =>
+                    x.Barcode == itemBeingScanned.Barcode && x.IsIncludedInADiscountOffer == false)
+                .Take(this.ItemsRequired - 1);
 
-                if (previousApplicableItem != null)
+                if (previousApplicableItems.Count() == this.ItemsRequired - 1)
                 {
-                    previousApplicableItem.SetIncludedInDiscountOffer(true);
-                    itemBeingScanned.ApplyDiscount(this.Description, 0);
+                    foreach (var item in previousApplicableItems)
+                    {
+                        item.SetIncludedInDiscountOffer(true);
+                    }
+                    itemBeingScanned.ApplyDiscount(this.Description, this.DiscountPrice);
                 }
             }
         }

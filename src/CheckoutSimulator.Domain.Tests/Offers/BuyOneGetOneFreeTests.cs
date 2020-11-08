@@ -197,7 +197,7 @@ namespace CheckoutSimulator.Domain.Tests.Offers
 
             public BuyOneGetOneFree BuildSut(string message, string barcode)
             {
-                return new BuyOneGetOneFree(message, barcode);
+                return new BuyOneGetOneFree(message, barcode, 2, 0);
             }
 
             public TestFixtureBuilder WithPreviouslyScannedItem(string barcode)
