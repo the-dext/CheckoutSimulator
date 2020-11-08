@@ -2,6 +2,8 @@
 
 namespace CheckoutSimulator.Application.Tests.CommandHandlers
 {
+    using System;
+    using System.Threading;
     using AutoFixture;
     using CheckoutSimulator.Application.CommandHandlers;
     using CheckoutSimulator.Application.Commands;
@@ -54,6 +56,17 @@ namespace CheckoutSimulator.Application.Tests.CommandHandlers
             AssertWritablePropertiesBehaveAsExpected<ScanItemCommandHandler>();
         }
 
+        [Fact]
+        public void Handle_Calls_Till_ScanItem()
+        {
+            var testFixtureBuilder = new TestFixtureBuilder();
+            var sut = testFixtureBuilder.BuildSut();
+
+            sut.Handle(new ScanItemCommand("B15"), default);
+
+            testFixtureBuilder.MockTill.Verify(x => x.ScanItem("B15"));
+        }
+
         /// <summary>
         /// Defines the <see cref="TestFixture"/>.
         /// </summary>
@@ -61,7 +74,7 @@ namespace CheckoutSimulator.Application.Tests.CommandHandlers
         {
             public Fixture Fixture;
 
-            public Mock<ITill> mockTill;
+            public Mock<ITill> MockTill;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="TestFixtureBuilder"/> class.
@@ -69,7 +82,7 @@ namespace CheckoutSimulator.Application.Tests.CommandHandlers
             public TestFixtureBuilder()
             {
                 this.Fixture = new Fixture();
-                this.mockTill = this.Fixture.Freeze<Mock<ITill>>();
+                this.MockTill = this.Fixture.Freeze<Mock<ITill>>();
             }
 
             /// <summary>
@@ -78,7 +91,7 @@ namespace CheckoutSimulator.Application.Tests.CommandHandlers
             /// <returns>The <see cref="ScanItemCommandHandler"/>.</returns>
             public ScanItemCommandHandler BuildSut()
             {
-                return new ScanItemCommandHandler(this.mockTill.Object);
+                return new ScanItemCommandHandler(this.MockTill.Object);
             }
         }
     }

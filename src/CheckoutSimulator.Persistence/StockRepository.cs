@@ -25,9 +25,9 @@ namespace CheckoutSimulator.Persistence
         {
             return Task.FromResult(new IStockKeepingUnit[]
             {
-                StockKeepingUnit.Create("B15", 0.50, "Biscuits"),
-                StockKeepingUnit.Create("A99", 0.30, "Apple"),
-                StockKeepingUnit.Create("c40", 0.60, "Eggs"),
+                StockKeepingUnit.Create("A99", 0.50, "Apple"),
+                StockKeepingUnit.Create("B15", 0.30, "Biscuits"),
+                StockKeepingUnit.Create("C40", 0.60, "Eggs"),
             }
             .AsEnumerable());
         }

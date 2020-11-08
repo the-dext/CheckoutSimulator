@@ -50,30 +50,5 @@ namespace CheckoutSimulator.Application.Tests.Commands
         {
             AssertWritablePropertiesBehaveAsExpected<ScanItemCommand>();
         }
-
-        /// <summary>
-        /// Defines the <see cref="TestFixtureBuilder" />.
-        /// </summary>
-        private class TestFixtureBuilder
-        {
-            public Fixture Fixture;
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="TestFixtureBuilder"/> class.
-            /// </summary>
-            public TestFixtureBuilder()
-            {
-                this.Fixture = new Fixture();
-            }
-
-            /// <summary>
-            /// The BuildSut.
-            /// </summary>
-            /// <returns>The <see cref="ScanItemCommand"/>.</returns>
-            public ScanItemCommand BuildSut()
-            {
-                return this.Fixture.Create<ScanItemCommand>();
-            }
-        }
     }
 }

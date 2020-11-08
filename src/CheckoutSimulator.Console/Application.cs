@@ -45,8 +45,7 @@ namespace CheckoutSimulator.Console
             try
             {
                 await this.SetupCommands();
-                this.PrintAppBanner();
-                this.PrintOptions();
+                this.DisplayMenu();
                 await this.WaitForCommand();
             }
             catch (Exception ex)
@@ -54,6 +53,13 @@ namespace CheckoutSimulator.Console
                 Debug.Write(ex);
                 WriteLine("Command caused an exception: " + ex.Message, ConsoleColor.Red);
             }
+        }
+
+        private void DisplayMenu()
+        {
+            Console.Clear();
+            this.PrintAppBanner();
+            this.PrintOptions();
         }
 
         /// <summary>
@@ -64,7 +70,6 @@ namespace CheckoutSimulator.Console
             WriteLine("******************************");
             WriteLine("***** Checkout Simulator *****");
             WriteLine("******************************");
-            WriteLine();
         }
 
         /// <summary>
@@ -72,6 +77,8 @@ namespace CheckoutSimulator.Console
         /// </summary>
         private void PrintOptions()
         {
+            WriteLine();
+            WriteLine("Select an option to scan items");
             foreach (var cmd in this.Commands)
             {
                 if (cmd.KeyboadShortCut != string.Empty)
@@ -83,6 +90,7 @@ namespace CheckoutSimulator.Console
                     WriteLine();
                 }
             }
+            WriteLine();
         }
 
         private static void WriteLine(string output = null, ConsoleColor colour = ConsoleColor.White)
@@ -105,22 +113,9 @@ namespace CheckoutSimulator.Console
         private async Task SetupCommands()
         {
             // General commands.
-            this.Commands = new List<(string KeyBoardShortcut, string Prompt, Func<Task<bool>> Function)>()
-            {
-                ("Q", "Quit Application", () => { Environment.Exit(0); return Task.FromResult(true); }),
-                ("T", "Request Scanning Total Price", async () =>
-                {
-                    var totalPrice = await this.AppMediator.Send(new GetTotalPriceQuery()).ConfigureAwait(true);
+            this.Commands = new List<(string KeyBoardShortcut, string Prompt, Func<Task<bool>> Function)>();
 
-                    WriteLine($"*********", ConsoleColor.Green);
-                    WriteLine($"Total price: {totalPrice:C2}", ConsoleColor.Green);
-                    WriteLine($"*********", ConsoleColor.Green);
-
-                    return true;
-                }),
-                (string.Empty, string.Empty, () => Task.FromResult(true)), // Null command to print a gap in the menu options.
-            };
-
+            this.AddBannerCommands(this.Commands);
 
             // Commands per SKU
             var stockItems = (await this.AppMediator.Send(new GetStockItemsQuery())).OrderBy(x => x.Description);
@@ -129,7 +124,7 @@ namespace CheckoutSimulator.Console
             {
                 this.Commands.Add(
                     (keyCode.ToString(),
-                    stockItem.Description,
+                    $"{stockItem.Description} ({stockItem.UnitPrice:C2})",
                     async () =>
                     {
                         var scanningResult = await this.AppMediator.Send(new ScanItemCommand(stockItem.Barcode));
@@ -149,6 +144,34 @@ namespace CheckoutSimulator.Console
                 ));
                 keyCode++;
             }
+        }
+
+        private void AddBannerCommands(List<(string KeyboadShortCut, string Prompt, Func<Task<bool>> Function)> commands)
+        {
+            // Quit App
+            commands.Add(("Q", "Quit Application", () => { Environment.Exit(0); return Task.FromResult(true); }));
+
+            // Request Total
+            commands.Add(("T", "Request Scanning Total Price", async () =>
+            {
+                var totalPrice = await this.AppMediator.Send(new GetTotalPriceQuery()).ConfigureAwait(true);
+
+                WriteLine($"*********", ConsoleColor.Green);
+                WriteLine($"Total price: {totalPrice:C2}", ConsoleColor.Green);
+                WriteLine($"*********", ConsoleColor.Green);
+
+                return true;
+            }));
+
+            commands.Add(("V", "Void Items", async () =>
+            {
+                await this.AppMediator.Send(new VoidItemsCommand()).ConfigureAwait(true);
+                this.DisplayMenu();
+                return true;
+            }));
+
+            // Null command to print a gap in the menu options.
+            commands.Add((string.Empty, string.Empty, () => Task.FromResult(true)));
         }
 
         /// <summary>
