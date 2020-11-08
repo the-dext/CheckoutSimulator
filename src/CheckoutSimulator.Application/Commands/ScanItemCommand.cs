@@ -3,7 +3,7 @@
 namespace CheckoutSimulator.Application.Commands
 {
     using Ardalis.GuardClauses;
-    using CheckoutSimulator.Domain;
+    using CheckoutSimulator.Domain.Scanning;
     using MediatR;
 
     /// <summary>

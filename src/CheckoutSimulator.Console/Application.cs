@@ -136,6 +136,12 @@ namespace CheckoutSimulator.Console
                         if (scanningResult.Success)
                         {
                             WriteLine($"1 {stockItem.Description} @{stockItem.UnitPrice:C2}", ConsoleColor.Green);
+
+                            if (!string.IsNullOrWhiteSpace(scanningResult.Message))
+                            {
+                                WriteLine($"*** {scanningResult.Message} ***", ConsoleColor.Yellow);
+                            }
+
                             return true;
                         }
                         return false;

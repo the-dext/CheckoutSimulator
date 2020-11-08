@@ -1,6 +1,7 @@
 ﻿// Checkout Simulator by Chris Dexter, file="Till.cs"
 
 using System.Collections.Generic;
+using CheckoutSimulator.Domain.Scanning;
 
 namespace CheckoutSimulator.Domain
 {

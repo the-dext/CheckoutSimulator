@@ -1,6 +1,6 @@
 ﻿// Checkout Simulator by Chris Dexter, file="Till.cs"
 
-namespace CheckoutSimulator.Domain
+namespace CheckoutSimulator.Domain.Scanning
 {
     /// <summary>
     /// Defines the <see cref="IScanningResult"/>.

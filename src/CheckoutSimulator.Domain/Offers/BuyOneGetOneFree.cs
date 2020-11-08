@@ -45,7 +45,10 @@ namespace CheckoutSimulator.Domain.Offers
             if (itemBeingScanned.Barcode == this.Barcode)
             {
                 // if there is one other item, that hasn't been included in a discount already then this discount can apply
-                var previousApplicableItem = previouslyScannedItems.FirstOrDefault(x => x.IsIncludedInADiscountOffer == false);
+                var previousApplicableItem = previouslyScannedItems.FirstOrDefault(x =>
+                    x.Barcode == itemBeingScanned.Barcode &&
+                    x.IsIncludedInADiscountOffer == false);
+
                 if (previousApplicableItem != null)
                 {
                     previousApplicableItem.SetIncludedInDiscountOffer(true);

@@ -6,6 +6,7 @@ namespace CheckoutSimulator.Application.Tests.CommandHandlers
     using CheckoutSimulator.Application.CommandHandlers;
     using CheckoutSimulator.Application.Commands;
     using CheckoutSimulator.Domain;
+    using CheckoutSimulator.Domain.Scanning;
     using FluentAssertions;
     using MediatR;
     using Moq;

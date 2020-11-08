@@ -4,7 +4,7 @@ namespace CheckoutSimulator.Application.Tests.Commands
 {
     using AutoFixture;
     using CheckoutSimulator.Application.Commands;
-    using CheckoutSimulator.Domain;
+    using CheckoutSimulator.Domain.Scanning;
     using FluentAssertions;
     using MediatR;
     using Xunit;

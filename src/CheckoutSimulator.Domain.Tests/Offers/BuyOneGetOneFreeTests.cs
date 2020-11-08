@@ -53,33 +53,55 @@ namespace CheckoutSimulator.Domain.Tests.Offers
         public void Should_Apply_Discount_When_Valid_TwoItems_Scanned()
         {
             // Arrange
+            const string Barcode = "B15";
             var testFixture = new TestFixtureBuilder();
             var sut = testFixture
-                .WithPreviouslyScannedItem("B15")
-                .BuildSut("My Test Discount", "B15");
-            var itemBeingScanned = Mock.Of<IScannedItem>(x => x.Barcode == "B15");
+                .WithPreviouslyScannedItem(Barcode)
+                .BuildSut("My Test Discount", Barcode);
 
             // Act
+            var itemBeingScanned = new ScannedItemMomento(Barcode, 0.45);
             sut.ApplyDiscount(itemBeingScanned, testFixture.PreviouslyScannedItems.ToArray());
 
             // Assert
-            Mock.Get(itemBeingScanned).Verify(x => x.ApplyDiscount("My Test Discount", -itemBeingScanned.UnitPrice), Times.Once);
+            testFixture.PreviouslyScannedItems.First().IsIncludedInADiscountOffer.Should().BeTrue();
+            itemBeingScanned.IsDiscounted.Should().BeTrue();
         }
 
         [Fact]
-        public void Should_Not_Apply_Discount_When_One_Item_Scanned()
+        public void Should_Not_Apply_Discount_When_First_Item_Scanned()
         {
             // Arrange
+            const string Barcode = "B15";
             var testFixture = new TestFixtureBuilder();
             var sut = testFixture
-                .BuildSut("My Test Discount", "B15");
-            var itemBeingScanned = Mock.Of<IScannedItem>(x => x.Barcode == "B15");
+                .BuildSut("My Test Discount", Barcode);
 
             // Act
-            sut.ApplyDiscount(itemBeingScanned, Array.Empty<IScannedItem>());
+            var itemBeingScanned = new ScannedItemMomento(Barcode, 0.45);
+            sut.ApplyDiscount(itemBeingScanned, testFixture.PreviouslyScannedItems.ToArray());
 
             // Assert
-            Mock.Get(itemBeingScanned).Verify(x => x.ApplyDiscount("My Test Discount", -itemBeingScanned.UnitPrice), Times.Never);
+            itemBeingScanned.IsDiscounted.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Should_Not_Apply_Discount_When_One_Item_Scanned_After_Previous_Items_Not_Applicable()
+        {
+            // Arrange
+            const string DiscountedBarcode = "B15";
+            var testFixture = new TestFixtureBuilder();
+            var sut = testFixture
+                .WithPreviouslyScannedItem("A99")
+                .WithPreviouslyScannedItem("A99")
+                .BuildSut("My Test Discount", DiscountedBarcode);
+
+            // Act
+            var itemBeingScanned = new ScannedItemMomento(DiscountedBarcode, 0.45);
+            sut.ApplyDiscount(itemBeingScanned, testFixture.PreviouslyScannedItems.ToArray());
+
+            // Assert
+            itemBeingScanned.IsDiscounted.Should().BeFalse();
         }
 
         [Fact]
@@ -133,7 +155,7 @@ namespace CheckoutSimulator.Domain.Tests.Offers
             firstItemBeingScanned.IsIncludedInADiscountOffer.Should().BeFalse();
         }
 
-                [Fact]
+        [Fact]
         public void Should_Not_Apply_Discount_Second_Item_Is_Not_Consecutively_Scanned()
         {
             // Arrange
