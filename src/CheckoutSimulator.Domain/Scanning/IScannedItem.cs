@@ -17,6 +17,8 @@ namespace CheckoutSimulator.Domain.Scanning
         /// </summary>
         bool IsDiscounted { get; }
 
+        bool IsIncludedInADiscountOffer { get; }
+
         /// <summary>
         /// Gets the Message.
         /// </summary>
@@ -38,5 +40,7 @@ namespace CheckoutSimulator.Domain.Scanning
         /// <param name="reason">The reason<see cref="string"/>.</param>
         /// <param name="priceAdjustment">The price adjustment.</param>
         void ApplyDiscount(string reason, double priceAdjustment);
+
+        void SetIncludedInDiscountOffer(bool value);
     }
 }

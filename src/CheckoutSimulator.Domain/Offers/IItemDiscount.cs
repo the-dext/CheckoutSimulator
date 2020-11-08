@@ -20,7 +20,7 @@ namespace CheckoutSimulator.Domain.Offers
         /// The ApplyDiscount.
         /// </summary>
         /// <param name="scannedItem">The scannedItem <see cref="IScannedItem"/>.</param>
-        /// <param name="previouslyScannedItems">The previouslyScannedItems<see cref="List{IScannedItem}"/>.</param>
+        /// <param name="previouslyScannedItems">The previouslyScannedItems <see cref="List{IScannedItem}"/>.</param>
         void ApplyDiscount(IScannedItem scannedItem, IScannedItem[] previouslyScannedItems);
     }
 }

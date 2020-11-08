@@ -2,9 +2,9 @@
 
 namespace CheckoutSimulator.Domain.Offers
 {
+    using System.Linq;
     using Ardalis.GuardClauses;
     using CheckoutSimulator.Domain.Scanning;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Defines the <see cref="BuyOneGetOneFree"/>.
@@ -36,6 +36,7 @@ namespace CheckoutSimulator.Domain.Offers
         /// The ApplyDiscount.
         /// </summary>
         /// <param name="itemBeingScanned">The scannedItem <see cref="IScannedItem"/>.</param>
+        /// <param name="previouslyScannedItems">The previouslyScannedItems<see cref="IScannedItem[]"/>.</param>
         public void ApplyDiscount(IScannedItem itemBeingScanned, IScannedItem[] previouslyScannedItems)
         {
             _ = Guard.Against.Null(itemBeingScanned, nameof(itemBeingScanned));
@@ -43,7 +44,13 @@ namespace CheckoutSimulator.Domain.Offers
 
             if (itemBeingScanned.Barcode == this.Barcode)
             {
-                itemBeingScanned.ApplyDiscount(this.Description, -itemBeingScanned.UnitPrice);
+                // if there is one other item, that hasn't been included in a discount already then this discount can apply
+                var previousApplicableItem = previouslyScannedItems.FirstOrDefault(x => x.IsIncludedInADiscountOffer == false);
+                if (previousApplicableItem != null)
+                {
+                    previousApplicableItem.SetIncludedInDiscountOffer(true);
+                    itemBeingScanned.ApplyDiscount(this.Description, -itemBeingScanned.UnitPrice);
+                }
             }
         }
     }

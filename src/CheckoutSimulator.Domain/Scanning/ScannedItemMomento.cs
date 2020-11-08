@@ -1,5 +1,7 @@
 ﻿// Checkout Simulator by Chris Dexter, file="ScannedItemMomento.cs"
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("CheckoutSimulator.Domain.Tests")]
 namespace CheckoutSimulator.Domain.Scanning
 {
     using Ardalis.GuardClauses;
@@ -7,6 +9,7 @@ namespace CheckoutSimulator.Domain.Scanning
     /// <summary>
     /// Defines the <see cref="ScannedItemMomento" />.
     /// </summary>
+    ///
     internal class ScannedItemMomento : IScannedItem
     {
         /// <summary>
@@ -29,6 +32,11 @@ namespace CheckoutSimulator.Domain.Scanning
         /// Gets a value indicating whether IsDiscounted.
         /// </summary>
         public bool IsDiscounted { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether IsIncludedInADiscountOffer.
+        /// </summary>
+        public bool IsIncludedInADiscountOffer { get; private set; }
 
         /// <summary>
         /// Gets the Message.
@@ -57,6 +65,16 @@ namespace CheckoutSimulator.Domain.Scanning
             this.Message = reason;
             this.IsDiscounted = true;
             this.PriceAdjustment = priceAdjustment;
+            this.IsIncludedInADiscountOffer = true;
+        }
+
+        /// <summary>
+        /// The SetIncludedInDiscountOffer.
+        /// </summary>
+        /// <param name="value">The value<see cref="bool"/>.</param>
+        public void SetIncludedInDiscountOffer(bool value)
+        {
+            this.IsIncludedInADiscountOffer = value;
         }
     }
 }
