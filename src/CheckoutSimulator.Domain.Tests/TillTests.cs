@@ -4,11 +4,13 @@ namespace CheckoutSimulator.Domain.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using AutoFixture;
     using CheckoutSimulator.Domain;
     using CheckoutSimulator.Domain.Exceptions;
     using CheckoutSimulator.Domain.Offers;
+    using CheckoutSimulator.Domain.Scanning;
     using FluentAssertions;
     using Moq;
     using Xunit;
@@ -107,6 +109,26 @@ namespace CheckoutSimulator.Domain.Tests
             sut.ListScannedItems().Count().Should().Be(0);
         }
 
+        [Fact]
+        public void ItemDiscount_CanBeApplied_DuringScanning()
+        {
+            // Arrange
+            const string Barcode = "B15";
+            const double ExpectedPrice = 0.45;
+
+            var testFixture = new TestFixtureBuilder();
+            var sut = testFixture
+                .WithStockKeepingUnit(Barcode, ExpectedPrice, "Biscuits")
+                .WithMockBuyOneGetOneFreeDiscount(Barcode)
+                .BuildSut();
+
+            // Act
+            sut.ScanItem(Barcode);
+            sut.ScanItem(Barcode);
+
+            sut.RequestTotalPrice().Should().Be(ExpectedPrice);
+        }
+
         /// <summary>
         /// The Constructors Guards Against Null Args.
         /// </summary>
@@ -182,7 +204,7 @@ namespace CheckoutSimulator.Domain.Tests
             public Fixture Fixture;
 
             public List<IStockKeepingUnit> StockKeepingUnits;
-
+            private readonly List<IDiscount> Discounts;
             private readonly List<Action<Till>> postBuildActions;
 
             /// <summary>
@@ -193,6 +215,7 @@ namespace CheckoutSimulator.Domain.Tests
                 this.Fixture = new Fixture();
                 this.postBuildActions = new List<Action<Till>>();
                 this.StockKeepingUnits = new List<IStockKeepingUnit>();
+                this.Discounts = new List<IDiscount>();
             }
 
             /// <summary>
@@ -201,7 +224,7 @@ namespace CheckoutSimulator.Domain.Tests
             /// <returns>The <see cref="Till"/>.</returns>
             public Till BuildSut()
             {
-                var ret = new Till(this.StockKeepingUnits.ToArray(), Array.Empty<IDiscount>());
+                var ret = new Till(this.StockKeepingUnits.ToArray(), this.Discounts.ToArray());
 
                 // apply post creation actions to set up test fixture state.
                 foreach (var action in this.postBuildActions)
@@ -240,6 +263,21 @@ namespace CheckoutSimulator.Domain.Tests
                     && x.Description == description);
 
                 this.StockKeepingUnits.Add(sku);
+
+                return this;
+            }
+
+            public TestFixtureBuilder WithMockBuyOneGetOneFreeDiscount(string barcode)
+            {
+                var callBacks = new Queue<Action<IScannedItem>>();
+                callBacks.Enqueue((scannedItem) => Debug.WriteLine("first callback, no discount"));
+                callBacks.Enqueue((scannedItem) => scannedItem.ApplyDiscount("mock discount", scannedItem.UnitPrice));
+
+                var discount = new Mock<IItemDiscount>();
+                discount.Setup(x => x.ApplyDiscount(It.Is<IScannedItem>(item => item.Barcode == barcode)))
+                    .Callback<IScannedItem>((scannedItem) => callBacks.Dequeue()(scannedItem));
+
+                this.Discounts.Add(discount.Object);
 
                 return this;
             }

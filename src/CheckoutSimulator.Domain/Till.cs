@@ -10,14 +10,16 @@ namespace CheckoutSimulator.Domain
     using CheckoutSimulator.Domain.Exceptions;
     using CheckoutSimulator.Domain.Offers;
     using CheckoutSimulator.Domain.Repositories;
+    using CheckoutSimulator.Domain.Scanning;
 
     /// <summary>
     /// Defines the <see cref="Till"/>.
     /// </summary>
     public class Till : ITill
     {
-        private readonly List<string> scannedItems = new List<string>();
-        private readonly IDiscount[] discounts;
+        private readonly List<ScannedItemMomento> scannedItems = new List<ScannedItemMomento>();
+        private readonly IItemDiscount[] itemDiscounts;
+        private readonly ISaleDiscount[] saleDiscounts;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Till"/> class.
@@ -28,7 +30,11 @@ namespace CheckoutSimulator.Domain
             System.Diagnostics.Debug.WriteLine($"Till created: {this.ObjectId}");
 
             this.stockKeepingUnits = Guard.Against.Null(stockKeepingUnits, nameof(stockKeepingUnits));
-            this.discounts = Guard.Against.Null(discounts, nameof(discounts));
+            _ = Guard.Against.Null(discounts, nameof(discounts));
+
+            // Sort the discounts into the two supported types so that it's quicker to loop through later.
+            this.itemDiscounts = discounts.Where(x => x is IItemDiscount).Cast<IItemDiscount>().ToArray();
+            this.saleDiscounts = discounts.Where(x => x is ISaleDiscount).Cast<ISaleDiscount>().ToArray();
         }
 
         /// <summary>
@@ -52,7 +58,7 @@ namespace CheckoutSimulator.Domain
         /// <returns>The <see cref="IEnumerable{IStockKeepingUnit}"/>.</returns>
         public IEnumerable<string> ListScannedItems()
         {
-            return this.scannedItems;
+            return this.scannedItems.Select(x => x.Barcode);
         }
 
         /// <summary>
@@ -66,8 +72,21 @@ namespace CheckoutSimulator.Domain
             var sku = this.stockKeepingUnits.FirstOrDefault(x => x.Barcode.Equals(barcode))
                 ?? throw new UnknownItemException($"Unrecognised barcode: {barcode}");
 
-            this.scannedItems.Add(barcode);
-            return new ScanningResult(true, null);
+            var momento = new ScannedItemMomento(sku.Barcode, sku.UnitPrice);
+            this.ApplyItemDiscounts(momento);
+
+            this.scannedItems.Add(momento);
+            return new ScanningResult(true, momento.Message);
+        }
+
+        private ScannedItemMomento ApplyItemDiscounts(ScannedItemMomento momento)
+        {
+            foreach (var itemDiscount in this.itemDiscounts)
+            {
+                itemDiscount.ApplyDiscount(momento);
+            }
+
+            return momento;
         }
 
         /// <summary>
@@ -80,15 +99,7 @@ namespace CheckoutSimulator.Domain
 
         public double RequestTotalPrice()
         {
-            var totalPriceBeforeDiscounts = 0d;
-            foreach (var scannedItem in this.scannedItems)
-            {
-                var sku = this.stockKeepingUnits.First(x => x.Barcode == scannedItem);
-
-                totalPriceBeforeDiscounts += sku.UnitPrice;
-            }
-
-            return totalPriceBeforeDiscounts;
+            return this.scannedItems.Sum(x => (x.UnitPrice - x.PriceAdjustment));
         }
     }
 }
