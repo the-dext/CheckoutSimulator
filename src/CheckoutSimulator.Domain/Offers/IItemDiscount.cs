@@ -2,6 +2,7 @@
 
 namespace CheckoutSimulator.Domain.Offers
 {
+    using System.Collections.Generic;
     using CheckoutSimulator.Domain.Scanning;
 
     /// <summary>
@@ -19,7 +20,7 @@ namespace CheckoutSimulator.Domain.Offers
         /// The ApplyDiscount.
         /// </summary>
         /// <param name="scannedItem">The scannedItem <see cref="IScannedItem"/>.</param>
-        /// <returns>The <see cref="IScannedItem"/>.</returns>
-        void ApplyDiscount(IScannedItem scannedItem);
+        /// <param name="previouslyScannedItems">The previouslyScannedItems<see cref="List{IScannedItem}"/>.</param>
+        void ApplyDiscount(IScannedItem scannedItem, IScannedItem[] previouslyScannedItems);
     }
 }

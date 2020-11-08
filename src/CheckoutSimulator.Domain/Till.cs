@@ -17,7 +17,7 @@ namespace CheckoutSimulator.Domain
     /// </summary>
     public class Till : ITill
     {
-        private readonly List<ScannedItemMomento> scannedItems = new List<ScannedItemMomento>();
+        private readonly List<IScannedItem> scannedItems = new List<IScannedItem>();
         private readonly IItemDiscount[] itemDiscounts;
         private readonly ISaleDiscount[] saleDiscounts;
 
@@ -83,7 +83,7 @@ namespace CheckoutSimulator.Domain
         {
             foreach (var itemDiscount in this.itemDiscounts)
             {
-                itemDiscount.ApplyDiscount(momento);
+                itemDiscount.ApplyDiscount(momento, this.scannedItems.ToArray());
             }
 
             return momento;

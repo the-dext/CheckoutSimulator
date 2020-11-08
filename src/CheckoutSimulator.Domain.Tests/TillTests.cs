@@ -269,13 +269,13 @@ namespace CheckoutSimulator.Domain.Tests
 
             public TestFixtureBuilder WithMockBuyOneGetOneFreeDiscount(string barcode)
             {
-                var callBacks = new Queue<Action<IScannedItem>>();
-                callBacks.Enqueue((scannedItem) => Debug.WriteLine("first callback, no discount"));
-                callBacks.Enqueue((scannedItem) => scannedItem.ApplyDiscount("mock discount", scannedItem.UnitPrice));
+                var callBacks = new Queue<Action<IScannedItem, IScannedItem[]>>();
+                callBacks.Enqueue((scannedItem, previouslyScannedItems) => Debug.WriteLine("first callback, no discount"));
+                callBacks.Enqueue((scannedItem, previouslyScannedItems) => scannedItem.ApplyDiscount("mock discount", scannedItem.UnitPrice));
 
                 var discount = new Mock<IItemDiscount>();
-                discount.Setup(x => x.ApplyDiscount(It.Is<IScannedItem>(item => item.Barcode == barcode)))
-                    .Callback<IScannedItem>((scannedItem) => callBacks.Dequeue()(scannedItem));
+                discount.Setup(x => x.ApplyDiscount(It.Is<IScannedItem>(item => item.Barcode == barcode), It.IsAny<IScannedItem[]>()))
+                    .Callback<IScannedItem, IScannedItem[]>((scannedItem, previouslyScannedItems) => callBacks.Dequeue()(scannedItem, previouslyScannedItems));
 
                 this.Discounts.Add(discount.Object);
 
