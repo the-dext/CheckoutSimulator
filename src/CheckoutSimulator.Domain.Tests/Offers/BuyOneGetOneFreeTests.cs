@@ -12,7 +12,7 @@ namespace CheckoutSimulator.Domain.Tests.Offers
     using Xunit;
     using static TestUtils.TestIdioms;
 
-    public class ItemDiscountTests
+    public class BuyOneGetOneFreeTests
     {
         /// <summary>
         /// The Constructors Guards Against Null Args.
@@ -20,7 +20,7 @@ namespace CheckoutSimulator.Domain.Tests.Offers
         [Fact]
         public void Constructor_GuardsAgainstNullArgs()
         {
-            AssertConstructorsGuardAgainstNullArgs<ItemDiscount>();
+            AssertConstructorsGuardAgainstNullArgs<BuyOneGetOneFree>();
         }
 
 
@@ -30,21 +30,20 @@ namespace CheckoutSimulator.Domain.Tests.Offers
         [Fact]
         public void Methods_GuardAgainstNullArgs()
         {
-            AssertMethodsGuardAgainstNullArgs<ItemDiscount>();
+            AssertMethodsGuardAgainstNullArgs<BuyOneGetOneFree>();
         }
-
 
         [Fact]
         public void Writable_Properties_Behave()
         {
-            AssertWritablePropertiesBehaveAsExpected<ItemDiscount>();
+            AssertWritablePropertiesBehaveAsExpected<BuyOneGetOneFree>();
         }
 
         [Fact]
         public void Implements_IItemDiscount_And_IDiscount()
         {
-            typeof(ItemDiscount).Should().BeAssignableTo<IItemDiscount>();
-            typeof(ItemDiscount).Should().BeAssignableTo<IDiscount>();
+            typeof(BuyOneGetOneFree).Should().BeAssignableTo<IItemDiscount>();
+            typeof(BuyOneGetOneFree).Should().BeAssignableTo<IDiscount>();
         }
 
         private class TestFixtureBuilder
@@ -58,9 +57,9 @@ namespace CheckoutSimulator.Domain.Tests.Offers
 
             }
 
-            public ItemDiscount BuildSut()
+            public BuyOneGetOneFree BuildSut()
             {
-                return new ItemDiscount(this.Fixture.Create<string>());
+                return new BuyOneGetOneFree(this.Fixture.Create<string>(), "B15");
             }
         }
     }

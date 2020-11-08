@@ -8,5 +8,6 @@ namespace CheckoutSimulator.Domain.Offers
     /// </summary>
     public interface IItemDiscount : IDiscount
     {
+        string Barcode { get; }
     }
 }

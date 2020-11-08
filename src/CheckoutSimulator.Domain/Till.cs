@@ -19,10 +19,6 @@ namespace CheckoutSimulator.Domain
         private readonly List<string> scannedItems = new List<string>();
         private readonly IDiscount[] discounts;
 
-        //public Till() : this(Array.Empty<IStockKeepingUnit>())
-        //{
-        //}
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Till"/> class.
         /// </summary>
